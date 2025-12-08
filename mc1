@@ -1,0 +1,92 @@
+#include <iostream>
+
+//definição formal
+class Peano {
+public:
+int valor; //representa a profundidade da estrutura
+
+Peano(int v) : valor(v) {}
+
+//função de interface
+void toString() const {
+if (valor == 0) {
+std::cout << "0";
+} else {
+std::cout << "S(";
+Peano(valor - 1).toString();
+std::cout << ")";
+}
+}
+
+//axioma da soma
+static Peano soma(Peano a, Peano b) {
+std::cout << "Soma: "; a.toString(); std::cout << " + "; b.toString(); std::cout << std::endl;
+if (b.valor == 0) return a;
+// Passo indutivo: b desce, o resultado sobe um sucessor
+return Peano(soma(a, Peano(b.valor - 1)).valor + 1);
+}
+
+//axioma da subtração
+static Peano sub(Peano a, Peano b) {
+std::cout << "Sub: "; a.toString(); std::cout << " - "; b.toString(); std::cout << std::endl;
+if (b.valor == 0) return a;
+if (a.valor == 0) {
+std::cout << "Erro: Resultado Negativo!\n";
+return Peano(0);
+}
+return sub(Peano(a.valor - 1), Peano(b.valor - 1));
+}
+
+//axioma da multiplicação
+static Peano mul(Peano a, Peano b) {
+std::cout << "Mul: "; a.toString(); std::cout << " * "; b.toString(); std::cout << std::endl;
+if (b.valor == 0) return Peano(0);
+if (b.valor == 1) return a;
+// Multiplicação é definida como somas sucessivas
+return soma(a, mul(a, Peano(b.valor - 1)));
+}
+
+//maximo entre dois números
+static Peano maximo(Peano a, Peano b) {
+std::cout << "Comparando Max: "; a.toString(); std::cout << " vs "; b.toString(); std::cout << std::endl;
+if (a.valor == 0) return b;
+if (b.valor == 0) return a;
+// Caminha para o zero em ambos e reconstrói o maior
+return Peano(maximo(Peano(a.valor - 1), Peano(b.valor - 1)).valor + 1);
+}
+};
+
+int main() {
+int n1, n2, op;
+
+while (true) {
+std::cout << "--- ARITMETICA DE PEANO ---";
+std::cout << "1. Soma\n2. Subtracao\n3. Multiplicacao\n4. Maximo\n0. Sair\n";
+std::cout << "Escolha: ";
+std::cin >> op;
+
+if (op == 0) break;
+
+std::cout << "Digite o primeiro numero (n): ";
+std::cin >> n1;
+std::cout << "Digite o segundo numero (m): ";
+std::cin >> n2;
+
+Peano a(n1), b(n2);
+Peano resultado(0);
+
+switch (op) {
+case 1: resultado = Peano::soma(a, b); break;
+case 2: resultado = Peano::sub(a, b); break;
+case 3: resultado = Peano::mul(a, b); break;
+case 4: resultado = Peano::maximo(a, b); break;
+default: std::cout << "Invalido\n"; continue;
+}
+
+std::cout << "\nRESULTADO FORMAL: ";
+resultado.toString();
+std::cout << "\nVALOR INTEIRO: " << resultado.valor << "\n";
+}
+
+return 0;
+}
