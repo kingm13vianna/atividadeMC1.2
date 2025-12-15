@@ -1,10 +1,9 @@
-ESSE CÓDIGO: #include <iostream>
+#include <iostream>
 #include <fstream>
 #include <string>
 
 using namespace std;
 
-// Função auxiliar para calcular (base^exp) % mod de forma eficiente
 // Utiliza o método "Exponenciação Binária" para evitar overflow de números grandes
 long long modExp(long long base, long long exp, long long mod) {
     long long result = 1;
