@@ -1,0 +1,65 @@
+ESSE CÓDIGO: #include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+// Função auxiliar para calcular (base^exp) % mod de forma eficiente
+// Utiliza o método "Exponenciação Binária" para evitar overflow de números grandes
+long long modExp(long long base, long long exp, long long mod) {
+    long long result = 1;
+    base = base % mod;
+    
+    while (exp > 0) {
+        // Se o expoente é ímpar, multiplica o resultado pela base atual
+        if (exp % 2 == 1) {
+            // Casting para __int128 garante que a multiplicação não estoure antes do módulo
+            // Se seu compilador não suportar __int128, use apenas long long (limitado a chaves menores)
+            result = (__int128)result * base % mod;
+        }
+        
+        // Agora o expoente deve ser par
+        exp = exp >> 1; // Divide por 2
+        base = (__int128)base * base % mod;
+    }
+    return result;
+}
+
+// Função solicitada: criptIn
+void criptIn(string arquivoEntrada, string arquivoSaida, long long e, long long n) {
+    // 1. Abrir o arquivo de entrada para leitura
+    ifstream entrada(arquivoEntrada);
+    if (!entrada.is_open()) {
+        cerr << "Erro: Nao foi possivel abrir o arquivo de entrada: " << arquivoEntrada << endl;
+        return;
+    }
+
+    // 2. Abrir o arquivo de saída para escrita
+    ofstream saida(arquivoSaida);
+    if (!saida.is_open()) {
+        cerr << "Erro: Nao foi possivel criar o arquivo de saida: " << arquivoSaida << endl;
+        entrada.close();
+        return;
+    }
+
+    char caractere;
+    // 3. Ler o arquivo caractere por caractere
+    // O 'noskipws' garante que leremos espaços, tabs e quebras de linha também
+    while (entrada >> noskipws >> caractere) {
+        // Converte o char para seu valor ASCII (inteiro)
+        long long m = static_cast<long long>(caractere);
+
+        // Aplica a fórmula RSA: C = m^e mod n
+        long long c = modExp(m, e, n);
+
+        // Escreve o número criptografado no arquivo de saída, seguido de um espaço
+        saida << c << " ";
+    }
+
+    // 4. Fechar os arquivos
+    entrada.close();
+    saida.close();
+
+    cout << "Criptografia concluida. Arquivo gerado: " << arquivoSaida << endl;
+}
+
