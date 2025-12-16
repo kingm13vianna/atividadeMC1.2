@@ -1,0 +1,75 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+        
+   // Função criptOut
+   void criptOut(string arquivoEntrada, string arquivoSaida, long long d, long long n) {
+
+    // 1. Abrir o arquivo criptografado para leitura
+    ifstream entrada(arquivoEntrada);
+    if (!entrada.is_open()) {
+    cerr << "Erro: Nao foi possivel abrir o arquivo criptografado: " 
+    << arquivoEntrada << endl;
+    return;
+    }
+
+    // 2. Abrir o arquivo de saída para escrita (texto descriptografado)
+    ofstream saida(arquivoSaida);
+    if (!saida.is_open()) {
+    cerr << "Erro: Nao foi possivel criar o arquivo de saida: " 
+    << arquivoSaida << endl;
+    entrada.close();
+    return;
+    }
+
+    long long c;
+    // 3. Ler cada numero criptografado do arquivo
+    while (entrada >> c) {
+    // Aplica a fórmula RSA: 
+    m = c^d mod n
+    long long m = modExp(c, d, n);
+
+    // Converte o valor inteiro para caractere
+    char caractere = static_cast<char>(m);
+
+    // Escreve o caractere no arquivo de saída
+    saida << caractere;
+    }
+
+    // 4. Fechar os arquivos
+    entrada.close();
+    saida.close();
+
+    cout << "Descriptografia concluida. Arquivo gerado: " 
+         << arquivoSaida << endl;
+}
+         
+// ---------- EXEMPLO ----------
+int main() {
+    // Chaves RSA (exemplo didático)
+    long long e = 17;
+    long long d = 2753;
+    long long n = 3233;
+
+    // Nomes dos arquivos
+    string original = "texto.txt";
+    string criptografado = "cripto.txt";
+    string descriptografado = "texto_decifrado.txt";
+
+    // Cria um arquivo de teste
+    ofstream teste(original);
+    teste << "Ola Mundo RSA!";
+    teste.close();
+
+    // Criptografa
+    criptIn(original, criptografado, e, n);
+
+    // Descriptografa
+    criptOut(criptografado, descriptografado, d, n);
+
+    cout << "Processo finalizado com sucesso!" << endl;
+
+    return 0;
+}
